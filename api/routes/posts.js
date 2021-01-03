@@ -44,3 +44,56 @@ router.post('/', upload.single("img"), (req,res,next) => {
     })
     .catch(err => res.status(500).json({error: err}));
 });
+
+router.get('/', (req,res,next) => {
+    Post.find()
+    .then(doc => {
+        res.status(201).json({
+            message: "List of all posts",
+            info: doc
+        });
+    })
+    .catch(err => res.status(500).json({error: err}));
+});
+
+router.delete('/:postId', (req,res,next) => {
+    const id = req.params.postId;
+    Post.findByIdAndDelete(id)
+    .then(doc => {
+        res.status(200).json({
+            message: "Post deleted, id: " + id,
+            info: doc
+        })
+    })
+    .catch(err => res.status(500).json({error: err}));
+});
+
+router.get('/:postId', (req,res,next) => {
+    const id = req.params.postId;
+    Post.findById(id)
+    .then(doc => {
+        res.status(201).json({
+            message: "Post, id: " + id,
+            info: doc
+        });
+    })
+    .catch(err => res.status(500).json({error: err}));
+});
+
+router.put('/postId', (req,res,next) => {
+    const id = req.params.postId;
+    Post.findByIdAndUpdate(id, {
+        postName: req.body.name,
+        postDescription: req.body.price,
+        img: req.file.path
+    }).
+    then(doc => {
+        res.status(200).json({
+            message: "post updated, id: " + id,
+            info: doc
+        });
+    })
+    .catch(err => res.status(500).json({error: err}));
+});
+
+module.exports = router;
