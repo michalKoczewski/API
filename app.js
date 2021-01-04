@@ -8,7 +8,6 @@ const app = express();
 mongoose.connect("mongodb+srv://" + process.env.MONGO_DB_LOGIN + ":"+ process.env.MONGO_DB_PASSWD +"@api.kqtsm.mongodb.net/<dbname>?retryWrites=true&w=majority",
     {useNewUrlParser: true, useUnifiedTopology: true}
 );
-mongoose.set('useCreateIndex', true);
 
 app.use("/uploads", express.static("uploads"));
 app.use(morgan("combined"));
