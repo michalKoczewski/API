@@ -3,38 +3,43 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const {check, validationResult} = require("express-validator");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 
-router.post('/', (req,res,next) => {
-    bcrypt.hash(req.body.userPasswd, 10, (err, hash) => {
-        if(err) {
-            return res.status(500).json({error: err});
-        } else {
-            const user = new User({
-                _id: new mongoose.Types.ObjectId(),
-                userName: req.body.userName,
-                userPasswd: hash,
-            })
-            user.save()
-            .then(doc => {
-                res.status(200).json({
-                    message: "User created successfully",
-                    info: doc
-                })
-            })
-            .catch(err => res.status(500).json({error: err}));
-        }
-    })
+
+router.post('/signup', [
+        check("userName","Please Enter a Valid Username")
+        .not()
+        .isEmpty(),
+        check("userPasswd", "Password must have length between 6 and 12").isLength({min: 6,max: 12})
+    ],
+    (req,res,next) => {
+    const errors = validationResult(req);
+    
+    if(!errors.isEmpty()) {
+        res.status(400).json({
+            error: errors
+        });
+    }
+
+    const user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        userName: req.body.userName,
+        userPasswd: req.body.userPasswd
+    });
+    user.save()
+    .then()
 });
 
 router.get('/', (req,res,next) => {
     User.find()
     .then(doc => {
         res.status(200).json({
-            message: "List of all users",
+            message: "List of all users", 
             info: doc
-        });
+        });    
     })
     .catch(err => res.status(500).json({error: err}));
 });

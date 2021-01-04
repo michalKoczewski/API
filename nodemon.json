@@ -2,6 +2,7 @@
     "env": {
         "MONGO_DB_LOGIN" : "dbAdmin",
         "MONGO_DB_PASSWD": "1lpegG2wdrVpHweb" ,
-        "ACCESS_TOKEN_SECRET": "zaq1@WSX"     
+        "TOKEN_SECRET": "zaq1@WSX",
+        "PORT": 3000     
     }
 }

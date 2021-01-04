@@ -31,8 +31,8 @@ const upload = multer({
 router.post('/', upload.single("img"), (req,res,next) => {
     const post = new Post({
         _id: new mongoose.Types.ObjectId(),
-        postName: req.body.name,
-        postDescription: req.body.price,
+        postName: req.body.postName,
+        postDescription: req.body.postDescription,
         img: req.file.path
     });
     post.save()
