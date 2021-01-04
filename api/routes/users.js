@@ -22,6 +22,7 @@ router.post('/', (req,res,next) => {
                     info: doc
                 })
             })
+            .catch(err => res.status(500).json({error: err}));
         }
     })
 });
