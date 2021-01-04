@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 
 
 router.post('/', (req,res,next) => {
@@ -58,6 +59,18 @@ router.delete('/:userId', (req,res,next) => {
             wiadomosc: "Deleted user, id: " + id,
             info: doc
         })
+    })
+    .catch(err => res.status(500).json({error: err}));
+});
+
+router.patch('/:userId', (req,res,next) => {
+    const id = req.params.userId;
+    User.findByIdAndUpdate(id)
+    .then(doc => {
+        res.status(200).json({
+            message: "User has been updated, id: " + id,
+            info: doc
+        });
     })
     .catch(err => res.status(500).json({error: err}));
 });

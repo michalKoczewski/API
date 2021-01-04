@@ -80,7 +80,7 @@ router.get('/:postId', (req,res,next) => {
     .catch(err => res.status(500).json({error: err}));
 });
 
-router.put('/postId', (req,res,next) => {
+router.patch('/postId', (req,res,next) => {
     const id = req.params.postId;
     Post.findByIdAndUpdate(id, {
         postName: req.body.name,

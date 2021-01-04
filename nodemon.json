@@ -1,6 +1,7 @@
 {
     "env": {
-        "login" : "dbAdmin",
-        "passwd": "1lpegG2wdrVpHweb"      
+        "MONGO_DB_LOGIN" : "dbAdmin",
+        "MONGO_DB_PASSWD": "1lpegG2wdrVpHweb" ,
+        "ACCESS_TOKEN_SECRET": "zaq1@WSX"     
     }
 }

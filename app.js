@@ -6,7 +6,7 @@ const cors = require("cors");
 
 const app = express();
 
-mongoose.connect("mongodb+srv://" + process.env.login + ":"+ process.env.passwd +"@api.kqtsm.mongodb.net/<dbname>?retryWrites=true&w=majority",
+mongoose.connect("mongodb+srv://" + process.env.MONGO_DB_LOGIN + ":"+ process.env.MONGO_DB_PASSWD +"@api.kqtsm.mongodb.net/<dbname>?retryWrites=true&w=majority",
     {useNewUrlParser: true, useUnifiedTopology: true}
 );
 mongoose.set('useCreateIndex', true);
