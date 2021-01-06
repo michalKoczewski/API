@@ -1,99 +1,130 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const {check, validationResult} = require("express-validator");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
 
-
-
-router.post('/signup', [
-        check("userName","Please Enter a Valid Username")
-        .not()
-        .isEmpty(),
-        check("userPasswd", "Password must have length between 6 and 12").isLength({min: 6,max: 12})
-    ],
-    (req,res,next) => {
-    const errors = validationResult(req);
-    
-    if(!errors.isEmpty()) {
-        res.status(400).json({
-            error: errors
-        });
-    }
-
-    const user = new User({
-        _id: new mongoose.Types.ObjectId(),
-        userName: req.body.userName,
-        userPasswd: req.body.userPasswd
-    });
-    if(User.find(user.userName)) {
-    user.save()
-    .then(doc => {
-        res.status(200).json({
-            message: "New user added",
-            info: doc
-        })
+router.post('/signUp', [
+    check("userName", "Please enter a valid username").not().isEmpty(),
+    check("userPasswd", "Please enter a valid password").isLength({
+        min: 6,
+        max: 12
     })
-    .catch(err => res.status(500).json({error: err}))
-    } else { 
-        res.status(500).json({message: "Username unavailable"});
-    }
-});
+],
 
-router.post('/signin', [
-    check("userName","Please Enter a Valid Username")
-    .not()
-    .isEmpty(),
-    check("userPasswd", "Password must have length between 6 and 12").isLength({min: 6,max: 12})
-], (req,res,next) => {
+async (req,res,next) => {
     const errors = validationResult(req);
-    
     if(!errors.isEmpty()) {
-        res.status(400).json({
-            error: errors
+        return res.status(400).json({
+            errors: errors.array()
         });
     }
 
     const { userName, userPasswd } = req.body;
 
-    const user = User.findOne({userName});
-
-    if(!user) {
-        res.status(400).json({
-            message: "User not exist"
+    //try {
+        let user = await User.findOne({
+            userName
+        });
+        if (user) {
+        return res.status(400).json({
+            message: "User already exists"
         });
     }
 
-    const isMatch = bcrypt.compare(userPasswd, user.userPasswd);
+    user = new User({
+        userName,
+        userPasswd
+    });
 
-    if(!isMatch) {
-        res.status(400).json({
-            message: "Incorrect Password !"
-        })
-    }
-    
+    const salt = await bcrypt.genSalt(10);
+    user.userPasswd = await bcrypt.hash(userPasswd, salt);
+
+    await user.save();
+
     const payload = {
         user: {
             id: user._id
         }
+    };
+
+    jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: 10000}, (err, token) => {
+        if(err) throw err;
+
+        res.status(200).json({
+            token
+        });
+    });
+
+    /*} catch (err) {
+        res.status(500).json({
+            message: "Error",
+            error: err
+        })
+    }*/
+});
+
+router.post('/signIn', [
+    check("userName", "Please enter a valid username").not().isEmpty(),
+    check("userPasswd", "Please enter a valid password").isLength({
+        min: 6,
+        max: 12
+    })
+],
+async (req,res,next) =>{
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+        return res.status(400).json({
+            errors: errors.array()
+        });
     }
 
-    jwt.sign(
-        payload,
-        process.env.TOKEN_SECRET,
-        {
-          expiresIn: 3600
-        },
-        (err, token) => {
-          if (err) throw err;
-          res.status(200).json({
-            token
-          });
-        }
-      );
+    const {userName, userPasswd} = req.body;
+
+    //try {
+        let user = await User.findOne({
+            userName
+        });
+
+        if(!user)
+            return res.status(400).json({
+                message: "User not exist"
+            });
+
+        const isMatch = await bcrypt.compare(userPasswd, user.userPasswd);
+
+        if(!isMatch)
+            return res.status(400).json({
+                message: "Incorrect Password"
+            });        
+
+        const payload = {
+            user: {
+                id: user._id
+            }
+        };
+
+        jwt.sign(
+            payload
+            , process.env.TOKEN_SECRET,
+            {
+                expiresIn: 3600
+            },
+            (err, token) => {
+                if (err) throw err;
+                res.status(200).json({
+                    token
+                });
+            }
+        );
+    /*} catch (err) {
+        res.status(500).json({
+            message: "Server Error",
+            error: err
+        });
+    }*/
 });
 
 router.get('/', (req,res,next) => {
@@ -132,8 +163,11 @@ router.delete('/:userId', (req,res,next) => {
 });
 
 router.patch('/:userId', (req,res,next) => {
-    const id = req.params.userId;
-    User.findByIdAndUpdate(id)
+    const id = req.params.userId;   
+    User.findByIdAndUpdate(id, {
+        userName: req.body.userName,
+        userPasswd: req.body.userPasswd
+    })
     .then(doc => {
         res.status(200).json({
             message: "User has been updated, id: " + id,

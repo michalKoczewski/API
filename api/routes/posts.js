@@ -83,9 +83,10 @@ router.get('/:postId', (req,res,next) => {
 router.patch('/postId', (req,res,next) => {
     const id = req.params.postId;
     Post.findByIdAndUpdate(id, {
-        postName: req.body.name,
-        postDescription: req.body.price,
-        img: req.file.path
+        postName: req.body.postName,
+        postDescription: req.body.postDescription,
+        img: req.file.path,
+        comment: req.body.comment
     }).
     then(doc => {
         res.status(200).json({
