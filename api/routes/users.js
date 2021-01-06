@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
-const {check, validationResult} = require("express-validator");
+const {check, validationResult, body} = require("express-validator");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 router.post('/signUp', [
     check("userName", "Please enter a valid username").not().isEmpty(),
@@ -23,19 +24,19 @@ async (req,res,next) => {
 
     const { userName, userPasswd } = req.body;
 
-    //try {
-        let user = await User.findOne({
-            userName
-        });
-        if (user) {
-        return res.status(400).json({
-            message: "User already exists"
+    let user = await User.findOne({
+        userName
+    });
+    if (user) {
+    return res.status(400).json({
+        message: "User already exists"
         });
     }
 
     user = new User({
-        userName,
-        userPasswd
+        _id: new mongoose.Types.ObjectId(),
+        userName: req.body.userName,
+        userPasswd: req.body.userPasswd
     });
 
     const salt = await bcrypt.genSalt(10);
@@ -55,14 +56,7 @@ async (req,res,next) => {
         res.status(200).json({
             token
         });
-    });
-
-    /*} catch (err) {
-        res.status(500).json({
-            message: "Error",
-            error: err
-        })
-    }*/
+    });    
 });
 
 router.post('/signIn', [
@@ -83,22 +77,23 @@ async (req,res,next) =>{
 
     const {userName, userPasswd} = req.body;
 
-    //try {
-        let user = await User.findOne({
-            userName
-        });
+        const user = await User.findOne({userName});
 
         if(!user)
             return res.status(400).json({
                 message: "User not exist"
             });
 
-        const isMatch = await bcrypt.compare(userPasswd, user.userPasswd);
+        const isMatch = await bcrypt.compare(userPasswd ,user.userPasswd);
+        
+        console.log(userPasswd + "\n");
+        console.log(user.userPasswd);
 
-        if(!isMatch)
+        if(!isMatch) {
             return res.status(400).json({
                 message: "Incorrect Password"
             });        
+        } else { 
 
         const payload = {
             user: {
@@ -119,12 +114,8 @@ async (req,res,next) =>{
                 });
             }
         );
-    /*} catch (err) {
-        res.status(500).json({
-            message: "Server Error",
-            error: err
-        });
-    }*/
+
+        }    
 });
 
 router.get('/', (req,res,next) => {
