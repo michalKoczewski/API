@@ -85,9 +85,6 @@ async (req,res,next) =>{
             });
 
         const isMatch = await bcrypt.compare(userPasswd ,user.userPasswd);
-        
-        console.log(userPasswd + "\n");
-        console.log(user.userPasswd);
 
         if(!isMatch) {
             return res.status(400).json({
