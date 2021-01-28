@@ -49,8 +49,7 @@ router.get('/', (req,res,next) => {
     Post.find()
     .then(doc => {
         res.status(201).json({
-            message: "List of all posts",
-            info: doc
+            posts: doc
         });
     })
     .catch(err => res.status(500).json({error: err}));
@@ -73,8 +72,7 @@ router.get('/:postId', (req,res,next) => {
     Post.findById(id)
     .then(doc => {
         res.status(201).json({
-            message: "Post, id: " + id,
-            info: doc
+            post: doc
         });
     })
     .catch(err => res.status(500).json({error: err}));
