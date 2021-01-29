@@ -2,8 +2,11 @@ const morgan = require("morgan");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const app = express();
+
+app.use(cors());
 
 mongoose.connect("mongodb+srv://" + process.env.MONGO_DB_LOGIN + ":"+ process.env.MONGO_DB_PASSWD +"@api.kqtsm.mongodb.net/<dbname>?retryWrites=true&w=majority",
     {useNewUrlParser: true, useUnifiedTopology: true}
