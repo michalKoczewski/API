@@ -56,28 +56,27 @@ async (req,res,next) =>{
     const errors = validationResult(req);
 
     if(!errors.isEmpty()) {
-        return res.status(410).json({
+        return res.status(400).json({
             errors: errors.array()
         });
     }
 
     const {userName, userPasswd} = req.body;
 
-    const user = await User.findOne({userName});
+        const user = await User.findOne({userName});
 
-    if(!user)
-        return res.status(404).json({
-            message: "User not exist"
-        });
+        if(!user)
+            return res.status(400).json({
+                message: "User not exist"
+            });
 
-    const isMatch = await bcrypt.compare(userPasswd ,user.userPasswd);
+        const isMatch = await bcrypt.compare(userPasswd ,user.userPasswd);
 
-    if(!isMatch) {
-        return res.status(405).json({
-            message: "Incorrect Password"
-        });
-
-    } else { 
+        if(!isMatch) {
+            return res.status(400).json({
+                message: "Incorrect Password"
+            });        
+        } else { 
 
         const payload = {
             user: {
@@ -98,7 +97,8 @@ async (req,res,next) =>{
                 });
             }
         );
-    }    
+
+        }    
 });
 
 router.get('/', (req,res,next) => {
@@ -125,8 +125,7 @@ router.get('/:userId', (req,res,next) => {
 });
 
 router.delete('/:userId', (req,res,next) => {
-    const id = req.params.userId;    
-
+    const id = req.params.userId;
     User.findByIdAndDelete(id)
     .then(doc => {
         res.status(200).json({
@@ -134,18 +133,19 @@ router.delete('/:userId', (req,res,next) => {
             info: doc
         })
     })
-    .catch(err => res.status(420).json({error: err}));
+    .catch(err => res.status(500).json({error: err}));
 });
 
 router.patch('/:userId', (req,res,next) => {
-    const id = req.params.userId;   
-
-    const salt =  bcrypt.genSalt(10);
-    req.body.userPasswd = bcrypt.hash(userPasswd, salt);
+    const id = req.params.userId;
+    var passwd = req.body.userPasswd;
+    
+    const salt = bcrypt.genSalt(10);
+    passwd = bcrypt.hash(req.body.passwd, salt).toString();    
 
     User.findByIdAndUpdate(id, {
         userName: req.body.userName,
-        userPasswd: req.body.userPasswd
+        userPasswd: passwd
     })
     .then(doc => {
         res.status(200).json({
