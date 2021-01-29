@@ -11,6 +11,9 @@ made in collaboration with => https://github.com/kubasse.
 ## Crud methods (one of 2 routes as an example):
 All api methods created with express framework, all data is stored in noSQL database MongoDB.
 
+### User model
+![usermodel](https://user-images.githubusercontent.com/52933683/106328567-510bdd00-6280-11eb-8876-28f7245854bd.PNG)
+
 ### Create
 ![userPost](https://user-images.githubusercontent.com/52933683/106327102-dc37a380-627d-11eb-8026-7c61bde5832b.PNG)
 
