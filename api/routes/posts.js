@@ -78,21 +78,4 @@ router.get('/:postId', (req,res,next) => {
     .catch(err => res.status(500).json({error: err}));
 });
 
-router.patch('/postId', (req,res,next) => {
-    const id = req.params.postId;
-    Post.findByIdAndUpdate(id, {
-        postName: req.body.postName,
-        postDescription: req.body.postDescription,
-        img: req.file.path,
-        comment: req.body.comment
-    }).
-    then(doc => {
-        res.status(200).json({
-            message: "post updated, id: " + id,
-            info: doc
-        });
-    })
-    .catch(err => res.status(500).json({error: err}));
-});
-
 module.exports = router;
