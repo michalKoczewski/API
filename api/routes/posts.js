@@ -49,7 +49,7 @@ router.get('/', (req,res,next) => {
     Post.find()
     .then(doc => {
         res.status(201).json({
-            posts: doc
+            info: doc
         });
     })
     .catch(err => res.status(500).json({error: err}));
