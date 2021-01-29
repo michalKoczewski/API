@@ -24,7 +24,7 @@ app.use("/users", userRoutes);
 
 app.use((req,res,next) => {
     const error = new Error("Błąd wyszukiwania");
-    error.status = 404;
+    error.status = 450;
     next(error);
 });
 

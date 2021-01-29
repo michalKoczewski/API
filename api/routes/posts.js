@@ -42,7 +42,7 @@ router.post('/', upload.single("img"), (req,res,next) => {
             info: doc
         });
     })
-    .catch(err => res.status(500).json({error: err}));
+    .catch(err => res.status(499).json({error: err}));
 });
 
 router.get('/', (req,res,next) => {

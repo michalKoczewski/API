@@ -6,9 +6,9 @@ const commentSchema = mongoose.Schema({
 
 const postSchema = mongoose.Schema({
     _id: mongoose.Types.ObjectId,
-    postName: {type: String, required: true},
-    postDescription: {type: String, required: false},
-    img: {type: String, required: false}
+    postName: {type: String},
+    postDescription: {type: String},
+    img: {type: String}
 })
 
 module.exports = mongoose.model("Post", postSchema);
