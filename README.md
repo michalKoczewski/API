@@ -9,7 +9,7 @@ made in collaboration with => https://github.com/kubasse.
 ![images](https://user-images.githubusercontent.com/52933683/106328035-68969600-627f-11eb-834b-d1cfb945efd1.PNG)
 
 ## Crud methods (one of 2 routes as an example):
-All api methods created with express framework, all date is stored in noSQL database MongoDB.
+All api methods created with express framework, all data is stored in noSQL database MongoDB.
 
 ### Create
 ![userPost](https://user-images.githubusercontent.com/52933683/106327102-dc37a380-627d-11eb-8026-7c61bde5832b.PNG)
